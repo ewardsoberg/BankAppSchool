@@ -1,40 +1,58 @@
 """All the functions in customer_menu."""
 from MySQL.UI.menu_function import menu
 from MySQL.UI.ui_utils import *
+from Mock_db.bank_menu import search_for_customer, open_json
+import json
 
 
-def get_by_id():
-    """Take customer id(int) as input and show that customer."""
-    print('Enter you customer ID: ')
-    c_id = f_input()
-    return controller.get_by_id(c_id)
-
-
-def search_for_account():
-    """Take first and last name as input and show that customer."""
-    print('Enter first name: ')
-    f_name = f_input()
-    print('Enter last name:')
-    l_name = f_input()
-    controller.search_for_customer(f_name=f_name, l_name=l_name)
+def get_account_number(name):
+    json_object = open_json()
+    for data in json_object['bank']['customers']:
+        if data['name'] == name:
+            for account in data['accounts']:
+                print(account)
 
 
 def withdraw_money():
     """Take customer id as input and withdraw money from that customers account."""
-    print('Enter Customer ID: ')
-    c_id = f_input()
-    print('Enter amount to withdraw: ')
-    amount = float(f_input())
-    controller.withdraw_money(c_id, amount)
+    print('Enter customer name: ')
+    name = f_input()
+    print('Enter amount you want to withdraw: ')
+    amount = f_input()
+    json_object = open_json()
+
+    for data in json_object['bank']['customers']:
+        if data['name'] == name:
+            for account in data['accounts']:
+                get_account_number(name)
+                a_num = int(input('Enter account number: '))
+                if account['account_number'] == a_num:
+                    account['amount'] -= int(amount)
+                    a_file = open("db_files/bank.json", "w")
+                    json.dump(json_object, a_file, indent=2)
+                    a_file.close()
+                break
 
 
 def insert_money():
     """Take customer id as input and insert money to that customers account."""
-    print('Enter Customer ID: ')
-    c_id = f_input()
-    print('Enter amount to insert: ')
-    amount = float(f_input())
-    controller.insert_money(c_id, amount)
+    print('Enter customer name: ')
+    name = f_input()
+    print('Enter amount you want to withdraw: ')
+    amount = f_input()
+    json_object = open_json()
+
+    for data in json_object['bank']['customers']:
+        if data['name'] == name:
+            for account in data['accounts']:
+                get_account_number(name)
+                a_num = int(input('Enter account number: '))
+                if account['account_number'] == a_num:
+                    account['amount'] += int(amount)
+                    a_file = open("db_files/bank.json", "w")
+                    json.dump(json_object, a_file, indent=2)
+                    a_file.close()
+                break
 
 
 def customer_menu():
@@ -42,7 +60,7 @@ def customer_menu():
     menu({
         "1": {
             "info": "Search for account",
-            "func": search_for_account
+            "func": search_for_customer
         },
         "2": {
             "info": "Withdraw money",

@@ -5,9 +5,22 @@ import json
 
 
 def open_json():
-    with open('db_files/bank.json') as f:
-        data = json.load(f)
-        return data
+    """Open and close the jsonfile acting as database."""
+    a_file = open('db_files/bank.json', 'r')
+    json_object = json.load(a_file)
+    a_file.close()
+    return json_object
+
+
+def get_account_number():
+    """Return a unique integer to be account_number."""
+    number_list = []
+    data = open_json()
+    for d in data['bank']['customers']:
+        for accounts in d['accounts']:
+            if accounts:
+                number_list.append(accounts['account_number'])
+    return number_list[-1] + 1
 
 
 def search_for_customer():
@@ -15,16 +28,19 @@ def search_for_customer():
     data = open_json()
     print('Enter customer name: ')
     name = f_input()
-    for data in data['customers']:
+    for data in data['bank']['customers']:
         if data['name'] == name:
+            divider()
             print(data)
+            divider()
 
 
 def show_all_customers():
     """Show all the customer."""
     data = open_json()
-    for data in data['customers']:
+    for data in data['bank']['customers']:
         print(data)
+        divider()
 
 
 def register_new_customer():
@@ -37,9 +53,9 @@ def register_new_customer():
     insert_dict['accounts'] = account
     with open('db_files/bank.json', 'r+') as file:
         data = json.load(file)
-        data['customers'].append(insert_dict)
+        data['bank']['customers'].append(insert_dict)
         file.seek(0)
-        json.dump(data, file)
+        json.dump(data, file, indent=2)
 
 
 def add_account_to_customer():
@@ -51,15 +67,17 @@ def add_account_to_customer():
     currency = f_input()
     print('Enter amount: ')
     amount = f_input()
+    insert_dict['account_number'] = get_account_number()
     insert_dict['currency'] = currency
     insert_dict['amount'] = amount
-    number_list = []
-    with open('db_files/bank.json', 'r+') as file:
-        data = json.load(file)
-        for data in data['customers']:
-            for accounts in data['accounts']:
-                if accounts:
-                    number_list.append(accounts['account_number'])
+    json_object = open_json()
+    for data in json_object['bank']['customers']:
+        if data['name'] == name:
+            data['accounts'].append(insert_dict)
+            a_file = open("db_files/bank.json", "w")
+            json.dump(json_object, a_file, indent=2)
+            a_file.close()
+
 
 def bank_menu():
     """Display all bank menu options."""

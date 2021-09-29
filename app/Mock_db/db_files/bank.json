@@ -38,7 +38,13 @@
       },
       {
         "name": "Bosse Bildoktorn",
-        "accounts": []
+        "accounts": [
+          {
+            "account_number": 5,
+            "currency": "SEK",
+            "amount": "23"
+          }
+        ]
       }
     ]
   }

@@ -4,7 +4,7 @@ from MySQL.db.models.bank import Bank as ModelBank
 from MySQL.db.models.customer import Customer as ModelCustomer
 from MySQL.db.models.account import Account as ModelAccount
 import MySQL.db.data_generator.file_generator as gen
-from MySQL.db import session
+from MySQL.db import session, Base, engine
 
 
 class Customer:
@@ -48,6 +48,10 @@ class Account:
         """How to represent."""
         return (f'Currency: {self.currency}, Amount: {self.amount}\n'
                 f' BankId: {self.bank_id}, CustomerId: {self.customer_id}')
+
+
+def init_db():
+    Base.metadata.create_all(bind=engine)
 
 
 def populate_db(model, data_dict):
@@ -101,7 +105,7 @@ def main():
     for a in accounts:
         print(a.__dict__)
 
-
+#init_db()
 populate_database()
 
 
